@@ -186,9 +186,9 @@ function DashboardView({ cm, dl, fi, ym }) {
       </SectionHeader>
       <div style={grid4}>
         <KpiCard label="이번달 신규 발행" value={cm.filter(c => inMon(c.created_date)).length + '건'} />
-        <KpiCard label="검수대기 (전체 누적)" value={cm.filter(c => c.review_status === '대기').length + '건'} sub="연월 무관" />
-        <KpiCard label="블로그 게시 완료율" value={Math.round(blogRate * 100) + '%'} sub="승인건 대비" />
-        <KpiCard label="전달 완료율" value={Math.round(handoffRate * 100) + '%'} sub="승인건 대비" />
+        <KpiCard label="검수대기 (전체 누적)" value={cm.filter(c => c.review_status === '대기').length + '건'} />
+        <KpiCard label="블로그 게시 완료율" value={Math.round(blogRate * 100) + '%'} />
+        <KpiCard label="전달 완료율" value={Math.round(handoffRate * 100) + '%'} />
       </div>
 
       {/* 섹션 2 */}
@@ -471,6 +471,127 @@ function TableView({ data, columns, color, title }) {
   )
 }
 
+// ── 콘텐츠 관리 뷰 (검수 승인 + 파일생성 표시 + 게시일 수동입력) ──
+function ContentManageView({ cm, onSaved }) {
+  const [busy, setBusy] = useState('')
+
+  const today = () => new Date().toISOString().slice(0, 10)
+
+  const update = async (id, patch, key) => {
+    setBusy(key)
+    const { error } = await supabase.from('content_master').update(patch).eq('id', id)
+    setBusy('')
+    if (error) { alert('저장 실패: ' + error.message); return }
+    onSaved()
+  }
+
+  const approve = (c) => {
+    if (!window.confirm(`"${c.title}"\n\n검수 승인하시겠습니까? 발행일이 오늘로 기록됩니다.`)) return
+    update(c.id, { review_status: '승인', published_date: today() }, c.id + '-approve')
+  }
+  const reject = (c) => {
+    if (!window.confirm(`"${c.title}"\n\n반려 처리하시겠습니까?`)) return
+    update(c.id, { review_status: '반려' }, c.id + '-reject')
+  }
+
+  // 파일 생성 여부 표시 (읽기 전용 — 콘텐츠 생성 시 자동 기록됨)
+  const FILE_DEFS = [
+    ['main_file', '메인'], ['blog_file', '블로그'], ['linkedin_file', '링크드'],
+    ['remember_file', '리멤버'], ['newsletter_file', '뉴스레터'], ['cardnews_file', '카드'],
+  ]
+  const renderFileDots = (c) => (
+    <div style={{ display: 'flex', gap: 3 }}>
+      {FILE_DEFS.map(([key, label]) => (
+        <span key={key} title={label + (c[key] ? ' 생성됨' : ' 미생성')} style={{
+          fontSize: 9, padding: '2px 5px', borderRadius: 3, whiteSpace: 'nowrap',
+          background: c[key] ? '#E8F5E9' : '#f1f3f5',
+          color: c[key] ? '#1B5E20' : '#ced4da',
+          fontWeight: c[key] ? 600 : 400,
+          textDecoration: c[key] ? 'none' : 'line-through',
+        }}>{label}</span>
+      ))}
+    </div>
+  )
+
+  // 게시일 수동 입력 (작업자 기록 영역)
+  const DATE_DEFS = [
+    ['blog_date', '블로그'], ['linkedin_date', '링크드인'], ['remember_date', '리멤버'],
+    ['newsletter_date', '뉴스레터'], ['cardnews_date', '카드뉴스'], ['handoff_date', '전달'],
+  ]
+  const renderDateCell = (c, field) => (
+    <input
+      type="date" value={c[field] || ''}
+      onChange={e => update(c.id, { [field]: e.target.value || null }, c.id + field)}
+      style={{
+        border: '1px solid ' + (c[field] ? '#c8e6c9' : '#e9ecef'), borderRadius: 4,
+        padding: '3px 4px', fontSize: 11, width: 108,
+        background: c[field] ? '#f1f8f2' : '#fff', color: c[field] ? '#1B5E20' : '#adb5bd',
+      }}
+    />
+  )
+
+  const th = { padding: '8px 8px', textAlign: 'left', color: '#6c757d', fontWeight: 500, borderBottom: '1px solid #dee2e6', whiteSpace: 'nowrap' }
+  const td = { padding: '7px 8px', color: '#495057', whiteSpace: 'nowrap', verticalAlign: 'middle' }
+  const btn = (bg) => ({
+    padding: '3px 10px', borderRadius: 4, border: 'none', background: bg,
+    color: '#fff', fontSize: 11, fontWeight: 600, cursor: 'pointer', marginLeft: 4
+  })
+
+  return (
+    <div>
+      <div style={{ borderRadius: 10, overflow: 'auto', border: '1px solid #dee2e6' }}>
+        <div style={{ background: NAVY, padding: '8px 14px' }}>
+          <span style={{ color: '#fff', fontSize: 13, fontWeight: 600 }}>
+            📋 콘텐츠 관리 — 검수 승인 · 파일 생성 현황 · 채널별 게시일 기록
+          </span>
+        </div>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+          <thead>
+            <tr style={{ background: '#f8f9fa' }}>
+              <th style={th}>ID</th>
+              <th style={th}>제목</th>
+              <th style={th}>테마</th>
+              <th style={th}>검수</th>
+              <th style={th}>등록일</th>
+              <th style={th}>발행일</th>
+              <th style={th}>파일 생성</th>
+              {DATE_DEFS.map(([f, label]) => <th key={f} style={th}>{label} 게시일</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {cm.map(c => (
+              <tr key={c.id} style={{ borderBottom: '1px solid #f1f3f5' }}>
+                <td style={{ ...td, fontWeight: 600 }}>{c.id}</td>
+                <td style={{ ...td, whiteSpace: 'normal', maxWidth: 180, fontWeight: 500 }}>{c.title}</td>
+                <td style={td}>{c.theme || '—'}</td>
+                <td style={td}>
+                  <Badge value={c.review_status} />
+                  {c.review_status === '대기' && (
+                    <>
+                      <button style={btn(GREEN)} disabled={busy === c.id + '-approve'} onClick={() => approve(c)}>승인</button>
+                      <button style={btn('#B71C1C')} disabled={busy === c.id + '-reject'} onClick={() => reject(c)}>반려</button>
+                    </>
+                  )}
+                </td>
+                <td style={td}>{c.created_date || '—'}</td>
+                <td style={{ ...td, fontWeight: 600, color: c.published_date ? GREEN : '#adb5bd' }}>{c.published_date || '—'}</td>
+                <td style={td}>{renderFileDots(c)}</td>
+                {DATE_DEFS.map(([f]) => <td key={f} style={td}>{renderDateCell(c, f)}</td>)}
+              </tr>
+            ))}
+            {cm.length === 0 && (
+              <tr><td colSpan={13} style={{ padding: 24, textAlign: 'center', color: '#adb5bd' }}>데이터가 없습니다</td></tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+      <p style={{ fontSize: 11, color: '#adb5bd', marginTop: 8 }}>
+        ※ 발행일은 [승인] 클릭 시 자동 기록 · 파일 생성 표시는 콘텐츠 생성 시 자동 기록 · 게시일은 각 채널 게시 후 직접 입력
+      </p>
+    </div>
+  )
+}
+
 // ── 메인 앱 ────────────────────────────────────────────────
 export default function App() {
   const [session, setSession] = useState(null)
@@ -575,13 +696,7 @@ export default function App() {
 
         {/* 뷰 */}
         {view === 'dashboard'    && <DashboardView cm={cm} dl={dl} fi={fi} ym={ym} />}
-        {view === 'content'      && <TableView data={cm} color={NAVY} title="📋 Content_Master — 콘텐츠 발행 파이프라인 (1~6단계)" columns={[
-          { key: 'id', label: 'ID' }, { key: 'title', label: '제목', wrap: true, maxW: 200 },
-          { key: 'review_status', label: '검수', badge: true }, { key: 'created_date', label: '발행일' },
-          { key: 'blog_date', label: '블로그' }, { key: 'linkedin_date', label: '링크드인' },
-          { key: 'remember_date', label: '리멤버' }, { key: 'newsletter_date', label: '뉴스레터' },
-          { key: 'handoff_date', label: '전달일' },
-        ]} />}
+        {view === 'content'      && <ContentManageView cm={cm} onSaved={loadData} />}
         {view === 'distribution' && <TableView data={dl} color={BLUE} title="📨 Distribution_Log — 채널별 발송 실적 (7~8단계)" columns={[
           { key: 'content_id', label: '콘텐츠ID' }, { key: 'channel', label: '채널' },
           { key: 'sent_date', label: '발송일' }, { key: 'owner_name', label: '담당자' },
