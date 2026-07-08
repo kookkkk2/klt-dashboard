@@ -1,0 +1,77 @@
+/* ── Wanted Design System · 기반 스타일 ───────────────────── */
+:root {
+  --wds-font: "Wanted Sans Variable", "Wanted Sans", -apple-system,
+    BlinkMacSystemFont, "Apple SD Gothic Neo", Pretendard, "Malgun Gothic",
+    "Segoe UI", Roboto, sans-serif;
+
+  /* Primary (Wanted Blue) */
+  --blue-0: #f7fbff;  --blue-10: #eaf2fe; --blue-20: #c9defe;
+  --blue-40: #4f95ff; --blue-50: #0066ff; --blue-60: #005eeb; --blue-70: #0054d1;
+
+  /* Neutral */
+  --neutral-0: #ffffff;  --neutral-5: #f7f7f8;  --neutral-10: #f4f4f5;
+  --neutral-20: #eaebec; --neutral-30: #e1e2e4; --neutral-40: #dbdcdf;
+  --neutral-50: #c2c4c8; --neutral-60: #989ba2; --neutral-70: #70737c;
+  --neutral-80: #46474c; --neutral-90: #37383c; --neutral-99: #171719;
+
+  color-scheme: light;
+  font-family: var(--wds-font);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--neutral-5);
+  color: var(--neutral-99);
+  font-family: var(--wds-font);
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  text-align: left;
+}
+
+button, input, select, textarea {
+  font-family: var(--wds-font);
+}
+
+/* 스크롤바 (Wanted 스타일 미니멀) */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--neutral-40); border-radius: 8px; border: 2px solid transparent; background-clip: content-box; }
+::-webkit-scrollbar-thumb:hover { background: var(--neutral-50); background-clip: content-box; }
+::-webkit-scrollbar-track { background: transparent; }
+
+/* ── 컴포넌트 인터랙션 (hover / focus) ────────────────────── */
+.wds-input {
+  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+  outline: none;
+}
+.wds-input:focus {
+  border-color: var(--blue-50) !important;
+  box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.14);
+  background: #fff !important;
+}
+.wds-input::placeholder { color: var(--neutral-50); }
+
+.wds-btn { transition: background .15s ease, box-shadow .15s ease, transform .05s ease, border-color .15s ease, color .15s ease; }
+.wds-btn:active:not(:disabled) { transform: translateY(1px); }
+.wds-btn-primary:hover:not(:disabled) { background: var(--blue-60) !important; }
+.wds-btn-ghost:hover:not(:disabled) { background: var(--neutral-5) !important; border-color: var(--neutral-40) !important; }
+
+.wds-tab { transition: background .15s ease, color .15s ease, border-color .15s ease; }
+.wds-tab:hover:not(.active) { background: var(--neutral-10); color: var(--neutral-90); }
+
+.wds-card { transition: box-shadow .18s ease, border-color .18s ease, transform .18s ease; }
+.wds-kpi:hover { box-shadow: 0 6px 20px rgba(23,23,25,0.08); transform: translateY(-2px); border-color: var(--neutral-40); }
+
+.wds-trow { transition: background .12s ease; }
+.wds-trow:hover td { background: var(--neutral-5); }
+
+.wds-linkbtn:hover { background: var(--neutral-10) !important; }
