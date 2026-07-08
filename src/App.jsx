@@ -525,10 +525,9 @@ function TableView({ data, columns, title }) {
   )
 }
 
-/* ── 콘텐츠 관리 뷰 ───────────────────────────────────────── */
+/* ── 콘텐츠 관리 뷰 (카드형) ──────────────────────────────── */
 function ContentManageView({ cm, onSaved }) {
   const [busy, setBusy] = useState('')
-
   const today = () => new Date().toISOString().slice(0, 10)
 
   const update = async (id, patch, key) => {
@@ -538,7 +537,6 @@ function ContentManageView({ cm, onSaved }) {
     if (error) { alert('저장 실패: ' + error.message); return }
     onSaved()
   }
-
   const approve = (c) => {
     if (!window.confirm(`"${c.title}"\n\n검수 승인하시겠습니까? 발행일이 오늘로 기록됩니다.`)) return
     update(c.id, { review_status: '승인', published_date: today() }, c.id + '-approve')
@@ -548,102 +546,151 @@ function ContentManageView({ cm, onSaved }) {
     update(c.id, { review_status: '반려' }, c.id + '-reject')
   }
 
+  // 파일 뱃지 → 실제 파일 (public/contents/<폴더>/*)
   const FILE_DEFS = [
-    ['main_file', '메인'], ['blog_file', '블로그'], ['linkedin_file', '소셜'],
-    ['remember_file', '타겟팅'], ['newsletter_file', '뉴스레터'], ['cardnews_file', '카드'],
+    ['main_file', '메인', '01_main.html'],
+    ['blog_file', '블로그', '02_blog.html'],
+    ['linkedin_file', '소셜', '03_social.html'],
+    ['remember_file', '타겟팅', '04_targeting.html'],
+    ['newsletter_file', '뉴스레터', '05_newsletter.html'],
+    ['cardnews_file', '카드', '06_cardnews_slides.html'],
   ]
-  const renderFileDots = (c) => (
-    <div style={{ display: 'flex', gap: 4 }}>
-      {FILE_DEFS.map(([key, label]) => (
-        <span key={key} title={label + (c[key] ? ' 생성됨' : ' 미생성')} style={{
-          fontSize: 10, padding: '3px 6px', borderRadius: 6, whiteSpace: 'nowrap',
-          background: c[key] ? C.greenBg : C.n10,
-          color: c[key] ? C.greenText : C.n50,
-          fontWeight: c[key] ? 600 : 500,
-          textDecoration: c[key] ? 'none' : 'line-through',
-        }}>{label}</span>
-      ))}
+  const fileHref = (c, fname) =>
+    c.folder_name ? `/contents/${encodeURIComponent(c.folder_name)}/${fname}` : null
+
+  const badgeBase = {
+    fontSize: 11.5, padding: '4px 10px', borderRadius: 8, whiteSpace: 'nowrap',
+    fontWeight: 600, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 4,
+  }
+  const renderFileBadges = (c) => (
+    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+      {FILE_DEFS.map(([key, label, fname]) => {
+        const made = !!c[key]
+        const href = made ? fileHref(c, fname) : null
+        if (href) {
+          return (
+            <a key={key} href={href} target="_blank" rel="noreferrer" title={label + ' 파일 열기'}
+              className="wds-linkbtn"
+              style={{ ...badgeBase, background: C.blue10, color: C.bluePressed, cursor: 'pointer' }}>
+              {label} ↗
+            </a>
+          )
+        }
+        return (
+          <span key={key} title={made ? label + ' 생성됨 (폴더명 미등록)' : label + ' 미생성'}
+            style={{ ...badgeBase, background: made ? C.greenBg : C.n10, color: made ? C.greenText : C.n50,
+              fontWeight: made ? 600 : 500, textDecoration: made ? 'none' : 'line-through' }}>
+            {label}
+          </span>
+        )
+      })}
     </div>
   )
 
+  // 채널별 게시일 (+ 일부 게시 링크)
   const DATE_DEFS = [
-    ['blog_date', '블로그'], ['linkedin_date', '소셜'], ['remember_date', '타겟팅'],
-    ['newsletter_date', '뉴스레터'], ['cardnews_date', '카드뉴스'], ['handoff_date', '전달'],
+    ['blog_date', '블로그', 'blog_url'],
+    ['linkedin_date', '소셜(링크드인)', 'linkedin_url'],
+    ['remember_date', '타겟팅(리멤버)', 'remember_url'],
+    ['newsletter_date', '뉴스레터', null],
+    ['cardnews_date', '카드뉴스', null],
+    ['handoff_date', '전달', null],
   ]
-  const renderDateCell = (c, field) => (
-    <input
-      className="wds-input" type="date" value={c[field] || ''}
+  const ctlBase = { borderRadius: 8, padding: '6px 8px', fontSize: 12, boxSizing: 'border-box' }
+  const dateInput = (c, field) => (
+    <input className="wds-input" type="date" value={c[field] || ''}
       onChange={e => update(c.id, { [field]: e.target.value || null }, c.id + field)}
-      style={{
-        border: `1px solid ${c[field] ? C.green + '55' : BORDER}`, borderRadius: 7,
-        padding: '5px 6px', fontSize: 11.5, width: 118,
-        background: c[field] ? '#F2FFF6' : SURFACE, color: c[field] ? C.greenText : FAINT,
-      }}
+      style={{ ...ctlBase, width: '100%',
+        border: `1px solid ${c[field] ? C.green + '55' : BORDER}`,
+        background: c[field] ? '#F2FFF6' : SURFACE, color: c[field] ? C.greenText : FAINT }}
     />
   )
+  const urlInput = (c, field) => (
+    <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
+      <input className="wds-input" type="url" placeholder="게시 링크 URL" defaultValue={c[field] || ''}
+        onBlur={e => { const v = e.target.value.trim(); if ((v || null) !== (c[field] || null)) update(c.id, { [field]: v || null }, c.id + field) }}
+        style={{ ...ctlBase, flex: 1, minWidth: 0, border: `1px solid ${BORDER}`, background: SURFACE, color: TEXT }}
+      />
+      {c[field] && (
+        <a href={c[field]} target="_blank" rel="noreferrer" title="게시글 열기" className="wds-linkbtn"
+          style={{ ...ctlBase, flexShrink: 0, background: C.blue10, color: C.bluePressed, fontWeight: 700,
+            textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
+          열기 ↗
+        </a>
+      )}
+    </div>
+  )
 
-  const th = { padding: '11px 10px', textAlign: 'left', color: MUTED, fontWeight: 600, fontSize: 12.5, borderBottom: `1px solid ${BORDER}`, whiteSpace: 'nowrap' }
-  const td = { padding: '10px 10px', color: C.n80, whiteSpace: 'nowrap', verticalAlign: 'middle', fontSize: 12.5 }
   const btn = (bg) => ({
-    padding: '4px 12px', borderRadius: 7, border: 'none', background: bg,
-    color: '#fff', fontSize: 11.5, fontWeight: 700, cursor: 'pointer', marginLeft: 4,
+    padding: '5px 12px', borderRadius: 8, border: 'none', background: bg,
+    color: '#fff', fontSize: 11.5, fontWeight: 700, cursor: 'pointer',
   })
 
   return (
     <div>
-      <Panel>
-        <div style={{ padding: '15px 18px', borderBottom: `1px solid ${BORDER}` }}>
-          <span style={{ color: TEXT, fontSize: 15, fontWeight: 700, letterSpacing: '-0.3px' }}>
-            콘텐츠 관리
-          </span>
-          <span style={{ color: MUTED, fontSize: 12.5, marginLeft: 10 }}>
-            검수 승인 · 파일 생성 현황 · 채널별 게시일 기록
-          </span>
-        </div>
-        <div style={{ overflow: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12.5 }}>
-            <thead>
-              <tr style={{ background: PAGE }}>
-                <th style={th}>ID</th>
-                <th style={th}>제목</th>
-                <th style={th}>테마</th>
-                <th style={th}>검수</th>
-                <th style={th}>등록일</th>
-                <th style={th}>발행일</th>
-                <th style={th}>파일 생성</th>
-                {DATE_DEFS.map(([f, label]) => <th key={f} style={th}>{label} 게시일</th>)}
-              </tr>
-            </thead>
-            <tbody>
-              {cm.map(c => (
-                <tr key={c.id} className="wds-trow" style={{ borderBottom: `1px solid ${BORDER_SUB}` }}>
-                  <td style={{ ...td, fontWeight: 700, color: TEXT }}>{c.id}</td>
-                  <td style={{ ...td, whiteSpace: 'normal', maxWidth: 180, fontWeight: 600, color: TEXT }}>{c.title}</td>
-                  <td style={td}>{c.theme || '—'}</td>
-                  <td style={td}>
-                    <Badge value={c.review_status} />
-                    {c.review_status === '대기' && (
-                      <>
-                        <button className="wds-btn" style={btn(C.green)} disabled={busy === c.id + '-approve'} onClick={() => approve(c)}>승인</button>
-                        <button className="wds-btn" style={btn(C.red)} disabled={busy === c.id + '-reject'} onClick={() => reject(c)}>반려</button>
-                      </>
-                    )}
-                  </td>
-                  <td style={td}>{c.created_date || '—'}</td>
-                  <td style={{ ...td, fontWeight: 700, color: c.published_date ? C.greenText : FAINT }}>{c.published_date || '—'}</td>
-                  <td style={td}>{renderFileDots(c)}</td>
-                  {DATE_DEFS.map(([f]) => <td key={f} style={td}>{renderDateCell(c, f)}</td>)}
-                </tr>
-              ))}
-              {cm.length === 0 && (
-                <tr><td colSpan={13} style={{ padding: 28, textAlign: 'center', color: FAINT, fontSize: 14 }}>데이터가 없습니다</td></tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </Panel>
-      <p style={{ fontSize: 12, color: FAINT, marginTop: 10, lineHeight: 1.6 }}>
-        ※ 발행일은 [승인] 클릭 시 자동 기록 · 파일 생성 표시는 콘텐츠 생성 시 자동 기록 · 게시일은 각 채널 게시 후 직접 입력
+      <SectionHeader accent={C.blue} no="📋" title="콘텐츠 관리"
+        desc="검수 승인 · 파일 열기 · 채널별 게시일/링크 기록" />
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        {cm.map(c => (
+          <Panel key={c.id} style={{ padding: 18 }}>
+            {/* 윗줄: ID · 제목 · 검수 */}
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
+              <div style={{ minWidth: 76 }}>
+                <div style={{ fontSize: 11, color: MUTED, fontWeight: 600 }}>ID</div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: C.bluePressed }}>{c.id}</div>
+              </div>
+              <div style={{ flex: 1, minWidth: 220 }}>
+                <div style={{ fontSize: 11, color: MUTED, fontWeight: 600, marginBottom: 2 }}>제목</div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: TEXT, lineHeight: 1.4 }}>{c.title}</div>
+                <div style={{ fontSize: 12, color: MUTED, marginTop: 5 }}>
+                  {c.theme ? '테마 ' + c.theme : '테마 —'}
+                  {'  ·  등록 '}{c.created_date || '—'}
+                  {'  ·  발행 '}
+                  <span style={{ color: c.published_date ? C.greenText : FAINT, fontWeight: 600 }}>{c.published_date || '—'}</span>
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                <Badge value={c.review_status} />
+                {c.review_status === '대기' && (
+                  <>
+                    <button className="wds-btn" style={btn(C.green)} disabled={busy === c.id + '-approve'} onClick={() => approve(c)}>승인</button>
+                    <button className="wds-btn" style={btn(C.red)} disabled={busy === c.id + '-reject'} onClick={() => reject(c)}>반려</button>
+                  </>
+                )}
+              </div>
+            </div>
+
+            <div style={{ height: 1, background: BORDER_SUB, margin: '14px 0' }} />
+
+            {/* 파일 열기 */}
+            <div style={{ marginBottom: 14 }}>
+              <div style={{ fontSize: 11, color: MUTED, fontWeight: 600, marginBottom: 6 }}>파일 (클릭 시 새 탭으로 열기)</div>
+              {renderFileBadges(c)}
+            </div>
+
+            {/* 채널별 게시일 · 게시 링크 */}
+            <div>
+              <div style={{ fontSize: 11, color: MUTED, fontWeight: 600, marginBottom: 8 }}>채널별 게시일 · 게시 링크</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0,1fr))', gap: 12 }}>
+                {DATE_DEFS.map(([field, label, urlField]) => (
+                  <div key={field} style={{ background: PAGE, borderRadius: 10, padding: 10 }}>
+                    <div style={{ fontSize: 11.5, color: SUB, fontWeight: 600, marginBottom: 5 }}>{label}</div>
+                    {dateInput(c, field)}
+                    {urlField && urlInput(c, urlField)}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Panel>
+        ))}
+        {cm.length === 0 && (
+          <Panel style={{ padding: 28, textAlign: 'center', color: FAINT, fontSize: 14 }}>데이터가 없습니다</Panel>
+        )}
+      </div>
+
+      <p style={{ fontSize: 12, color: FAINT, marginTop: 12, lineHeight: 1.6 }}>
+        ※ 발행일은 [승인] 클릭 시 자동 기록 · 파일은 public/contents 에 배포된 HTML을 새 탭으로 엽니다 · 게시일/게시 링크는 각 채널 게시 후 직접 입력
       </p>
     </div>
   )
