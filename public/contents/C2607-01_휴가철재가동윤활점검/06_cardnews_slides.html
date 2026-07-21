@@ -1,68 +1,277 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head><meta charset="UTF-8"><title>C2607-01 카드뉴스</title>
+<!--
+  [구성 프레임워크] Hack List형(관리자 테마): 반전 Hook 표지 → 명명된 원인 3개 → 비교·시퀀스·체크리스트 → 수치 → 종합+CTA
+  [표지 Hook 후보 — 검수 시 택1, 나머지는 차기 콘텐츠에 재활용]
+    ① 라인 고장은 휴가 중에 시작됩니다 (채택 — 반전형)
+    ② 2주 멈춘 설비, 유막은 안녕할까요? (질문형)
+    ③ 복귀 D-1, 라인보다 먼저 켜야 하는 것 (호기심형)
+  [공통 규칙] 표지=피드 단독 썸네일 / 본문 슬라이드 시각 템플릿 통일(배경 #F4F6FA, 배지+제목+시각+한 줄 요약) / 슬라이드당 아이디어 1개
+-->
 <style>
   body{margin:0;background:#E8EEF8;font-family:'Pretendard','Malgun Gothic','Apple SD Gothic Neo',sans-serif;}
-  .slide{width:1080px;height:1080px;margin:30px auto;position:relative;overflow:hidden;box-sizing:border-box;}
+  .slide{width:1080px;height:1080px;margin:30px auto;position:relative;overflow:hidden;box-sizing:border-box;background:#FFFFFF;}
   .num{position:absolute;bottom:44px;right:52px;font-size:24px;color:rgba(255,255,255,0.55);}
+  .num.dark{color:#9AA3B2;}
   .brand{position:absolute;top:48px;left:56px;font-size:24px;font-weight:700;letter-spacing:3px;}
   .badge{display:inline-block;background:#3B5BDB;color:#fff;font-size:26px;font-weight:700;border-radius:12px;padding:8px 22px;}
+  .viz{display:flex;align-items:center;justify-content:center;}
+  svg text{font-family:'Pretendard','Malgun Gothic','Apple SD Gothic Neo',sans-serif;}
 </style>
 </head>
 <body>
 
-<!-- 슬라이드 1: 표지 -->
-<!-- [시각화 방향] 어두운 공장 라인 배경 사진 + 우측 하단 Pulsarlube 제품 실사 -->
+<!-- ═══ 슬라이드 1: 표지 (TYPE A · 썸네일 단독 경쟁) ═══ -->
+<!-- [시각 요소] 배경 반투명 모티프 — 기어 2개 + 윤활 방울 (화이트 라인) -->
 <div class="slide" style="background:linear-gradient(115deg,#1A1F6B 0%,#3B5BDB 100%);padding:120px 90px;">
+  <svg width="560" height="560" viewBox="0 0 560 560" style="position:absolute;right:-70px;bottom:-70px;opacity:0.14;">
+    <g stroke="#FFFFFF" stroke-width="8" fill="none">
+      <circle cx="300" cy="320" r="150"/>
+      <circle cx="300" cy="320" r="62"/>
+      <g stroke-linecap="round">
+        <line x1="300" y1="140" x2="300" y2="170"/><line x1="300" y1="470" x2="300" y2="500"/>
+        <line x1="120" y1="320" x2="150" y2="320"/><line x1="450" y1="320" x2="480" y2="320"/>
+        <line x1="173" y1="193" x2="194" y2="214"/><line x1="406" y1="426" x2="427" y2="447"/>
+        <line x1="427" y1="193" x2="406" y2="214"/><line x1="194" y1="426" x2="173" y2="447"/>
+      </g>
+      <circle cx="470" cy="120" r="66"/>
+      <circle cx="470" cy="120" r="26"/>
+      <g stroke-linecap="round">
+        <line x1="470" y1="38" x2="470" y2="54"/><line x1="470" y1="186" x2="470" y2="202"/>
+        <line x1="388" y1="120" x2="404" y2="120"/><line x1="536" y1="120" x2="552" y2="120"/>
+      </g>
+      <path d="M120 400 C138 428 152 448 152 468 A32 32 0 1 1 88 468 C88 448 102 428 120 400 Z"/>
+    </g>
+  </svg>
   <div class="brand" style="color:#FFFFFF;">KLT &bull; PULSARLUBE</div>
-  <p style="color:#FFFFFF;font-size:32px;font-weight:700;margin:230px 0 20px;"><span style="background:rgba(255,255,255,0.15);border-radius:10px;padding:6px 18px;">3분 요약</span></p>
-  <h1 style="color:#FFFFFF;font-size:62px;line-height:1.4;margin:0;">휴가 끝난 라인,<br><span style="color:#F5A623;">재가동 첫날</span>이 가장 위험합니다</h1>
-  <p style="color:rgba(255,255,255,0.7);font-size:28px;margin-top:34px;">설비보전&middot;공무 담당자를 위한 재가동 윤활 가이드</p>
-  <div class="num">1 / 6</div>
+  <p style="color:#FFFFFF;font-size:32px;font-weight:700;margin:190px 0 20px;position:relative;"><span style="background:rgba(255,255,255,0.15);border-radius:10px;padding:6px 18px;">3분 요약</span></p>
+  <h1 style="color:#FFFFFF;font-size:66px;line-height:1.4;margin:0;position:relative;">라인 고장은<br><span style="color:#F5A623;">휴가 중에</span> 시작됩니다</h1>
+  <p style="color:rgba(255,255,255,0.75);font-size:30px;margin-top:34px;position:relative;">다운타임의 절반은 윤활에서 &mdash; 재가동 전 점검 순서 3</p>
+  <div class="num">1 / 8</div>
 </div>
 
-<!-- 슬라이드 2: 본문 ① -->
-<!-- [시각화 방향] 베어링 단면에서 그리스가 아래로 흘러내리는 일러스트 + 달력 아이콘(2주) -->
-<div class="slide" style="background:#F4F6FA;padding:110px 90px;">
+<!-- ═══ 슬라이드 2: POINT 1 무너진 유막 (TYPE B) ═══ -->
+<!-- [시각 요소] 베어링 단면(외륜·전동체·내륜) + 그리스가 아래로 흘러내리는 방울 + 1~2주 정지 달력 -->
+<div class="slide" style="background:#F4F6FA;padding:90px 90px 80px;">
   <span class="badge">POINT 1</span>
-  <h2 style="color:#1E2B7A;font-size:52px;margin:36px 0 44px;">무너진 유막</h2>
-  <p style="color:#1A1F3C;font-size:38px;line-height:1.7;margin:0;">멈춘 1~2주,<br>그리스는 흘러내리고 기유는 분리됩니다.<br>재기동 순간은 금속끼리의 건마찰.</p>
-  <div class="num" style="color:#9AA3B2;">2 / 6</div>
+  <h2 style="color:#1E2B7A;font-size:52px;margin:32px 0 0;">유막 파괴</h2>
+  <div class="viz" style="height:440px;margin:30px 0;">
+    <svg width="760" height="420" viewBox="0 0 760 420">
+      <rect x="40" y="80" width="180" height="160" rx="14" fill="#FFFFFF" stroke="#1E2B7A" stroke-width="6"/>
+      <rect x="40" y="80" width="180" height="46" rx="14" fill="#1E2B7A"/>
+      <rect x="40" y="104" width="180" height="22" fill="#1E2B7A"/>
+      <line x1="80" y1="62" x2="80" y2="96" stroke="#1E2B7A" stroke-width="8" stroke-linecap="round"/>
+      <line x1="180" y1="62" x2="180" y2="96" stroke="#1E2B7A" stroke-width="8" stroke-linecap="round"/>
+      <text x="130" y="192" text-anchor="middle" font-size="40" font-weight="700" fill="#3B5BDB">1~2주</text>
+      <text x="130" y="272" text-anchor="middle" font-size="24" fill="#6B7280">라인 정지</text>
+      <circle cx="490" cy="180" r="140" fill="#E8EEF8" stroke="#1E2B7A" stroke-width="8"/>
+      <circle cx="490" cy="180" r="58" fill="#FFFFFF" stroke="#1E2B7A" stroke-width="8"/>
+      <g fill="#3B5BDB">
+        <circle cx="490" cy="81" r="17"/><circle cx="560" cy="110" r="17"/><circle cx="589" cy="180" r="17"/>
+        <circle cx="560" cy="250" r="17"/><circle cx="490" cy="279" r="17"/><circle cx="420" cy="250" r="17"/>
+        <circle cx="391" cy="180" r="17"/><circle cx="420" cy="110" r="17"/>
+      </g>
+      <path d="M395 95 A128 128 0 0 1 585 95" fill="none" stroke="#F5A623" stroke-width="6" stroke-dasharray="4 18" stroke-linecap="round"/>
+      <g fill="#F5A623">
+        <path d="M470 344 C478 357 484 366 484 375 A14 14 0 1 1 456 375 C456 366 462 357 470 344 Z"/>
+        <path d="M515 358 C521 368 526 375 526 382 A11 11 0 1 1 504 382 C504 375 509 368 515 358 Z"/>
+      </g>
+      <line x1="490" y1="322" x2="490" y2="352" stroke="#6B7280" stroke-width="5" stroke-dasharray="8 8" stroke-linecap="round"/>
+      <text x="490" y="412" text-anchor="middle" font-size="24" fill="#6B7280">오일이 빠져나가 유막 파괴</text>
+      <line x1="240" y1="180" x2="320" y2="180" stroke="#3B5BDB" stroke-width="7" stroke-linecap="round"/>
+      <polygon points="342,180 314,166 314,194" fill="#3B5BDB"/>
+    </svg>
+  </div>
+  <p style="color:#1A1F3C;font-size:38px;line-height:1.7;margin:0;text-align:center;">멈춘 1~2주, 기름막은 사라집니다.<br>재기동 순간, 금속끼리 거칠게 맞닿습니다.</p>
+  <div class="num dark">2 / 8</div>
 </div>
 
-<!-- 슬라이드 3: 본문 ② -->
-<!-- [시각화 방향] 하우징 내부 결로 물방울 확대 일러스트 + 온도계/습도 아이콘 -->
-<div class="slide" style="background:#FFFFFF;padding:110px 90px;">
+<!-- ═══ 슬라이드 3: POINT 2 여름 결로 (TYPE B) ═══ -->
+<!-- [시각 요소] 베어링 하우징 내부 결로 물방울 + 주야 온도차(해·달) 도식 -->
+<div class="slide" style="background:#F4F6FA;padding:90px 90px 80px;">
   <span class="badge">POINT 2</span>
-  <h2 style="color:#1E2B7A;font-size:52px;margin:36px 0 44px;">여름 결로</h2>
-  <p style="color:#1A1F3C;font-size:38px;line-height:1.7;margin:0;">주야 온도차가 하우징 안에<br>물방울을 만들고, 부식과<br>그리스 유화가 시작됩니다.</p>
-  <div class="num" style="color:#9AA3B2;">3 / 6</div>
+  <h2 style="color:#1E2B7A;font-size:52px;margin:32px 0 0;">여름 결로</h2>
+  <div class="viz" style="height:440px;margin:30px 0;">
+    <svg width="760" height="420" viewBox="0 0 760 420">
+      <g stroke="#F5A623" stroke-width="6" fill="none" stroke-linecap="round">
+        <circle cx="110" cy="80" r="34"/>
+        <line x1="110" y1="18" x2="110" y2="34"/><line x1="110" y1="126" x2="110" y2="142"/>
+        <line x1="48" y1="80" x2="64" y2="80"/><line x1="156" y1="80" x2="172" y2="80"/>
+        <line x1="66" y1="36" x2="78" y2="48"/><line x1="142" y1="112" x2="154" y2="124"/>
+        <line x1="154" y1="36" x2="142" y2="48"/><line x1="78" y1="112" x2="66" y2="124"/>
+      </g>
+      <path d="M660 46 A44 44 0 1 0 694 118 A36 36 0 0 1 660 46 Z" fill="none" stroke="#6B7280" stroke-width="6" stroke-linejoin="round"/>
+      <line x1="230" y1="80" x2="560" y2="80" stroke="#D9DEE8" stroke-width="5" stroke-linecap="round"/>
+      <polygon points="238,80 262,68 262,92" fill="#D9DEE8"/>
+      <polygon points="552,80 528,68 528,92" fill="#D9DEE8"/>
+      <text x="395" y="66" text-anchor="middle" font-size="26" font-weight="700" fill="#6B7280">주야 온도차</text>
+      <rect x="200" y="140" width="380" height="240" rx="22" fill="#FFFFFF" stroke="#1E2B7A" stroke-width="8"/>
+      <circle cx="390" cy="272" r="72" fill="#E8EEF8" stroke="#1E2B7A" stroke-width="7"/>
+      <circle cx="390" cy="272" r="28" fill="#FFFFFF" stroke="#1E2B7A" stroke-width="7"/>
+      <g fill="#3B5BDB">
+        <path d="M262 158 C269 170 274 178 274 186 A12 12 0 1 1 250 186 C250 178 255 170 262 158 Z"/>
+        <path d="M340 152 C346 162 350 169 350 176 A10 10 0 1 1 330 176 C330 169 334 162 340 152 Z"/>
+        <path d="M448 156 C455 168 460 176 460 184 A12 12 0 1 1 436 184 C436 176 441 168 448 156 Z"/>
+        <path d="M522 152 C528 162 532 169 532 176 A10 10 0 1 1 512 176 C512 169 516 162 522 152 Z"/>
+      </g>
+      <path d="M330 330 l14 -14 l12 12 l14 -14" fill="none" stroke="#6B7280" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="390" y="416" text-anchor="middle" font-size="24" fill="#6B7280">내부 결로 &rarr; 부식 &middot; 그리스 묽어짐</text>
+    </svg>
+  </div>
+  <p style="color:#1A1F3C;font-size:38px;line-height:1.7;margin:0;text-align:center;">밤낮 온도차가 하우징 안에 물방울을 만들고,<br>부식이 시작되며 그리스는 묽어집니다.</p>
+  <div class="num dark">3 / 8</div>
 </div>
 
-<!-- 슬라이드 4: 본문 ③ -->
-<!-- [시각화 방향] 자동 주유기 소량 주입 사이클 다이어그램 (타임라인: D-1 → 기동) -->
-<div class="slide" style="background:#F4F6FA;padding:110px 90px;">
+<!-- ═══ 슬라이드 4: POINT 3 일괄 급유의 함정 (TYPE D Before/After 비교) ═══ -->
+<!-- [시각 요소] 좌: ✗ 몰아치기 급유(과다 주입 넘침 + 누락 포인트 빈 원) / 우: ✓ 소량·다회(균일 방울 3개 + 유막 호 복원) -->
+<div class="slide" style="background:#F4F6FA;padding:90px 70px 80px;">
   <span class="badge">POINT 3</span>
-  <h2 style="color:#1E2B7A;font-size:52px;margin:36px 0 44px;">소량&middot;다회 주입</h2>
-  <p style="color:#1A1F3C;font-size:38px;line-height:1.7;margin:0;">몰아치기 급유는 금물.<br>재가동 전 유막부터 재형성 —<br>자동 윤활은 이 순서를 스스로 지킵니다.</p>
-  <div class="num" style="color:#9AA3B2;">4 / 6</div>
+  <h2 style="color:#1E2B7A;font-size:52px;margin:32px 0 0;">일괄 급유의 함정</h2>
+  <div class="viz" style="height:520px;margin:24px 0 0;">
+    <svg width="940" height="500" viewBox="0 0 940 500">
+      <!-- 좌 카드: 몰아치기 -->
+      <rect x="20" y="30" width="430" height="420" rx="20" fill="#FFFFFF" stroke="#D9DEE8" stroke-width="4"/>
+      <circle cx="90" cy="95" r="30" fill="#6B7280"/>
+      <path d="M76 81 L104 109 M104 81 L76 109" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round"/>
+      <text x="140" y="106" font-size="32" font-weight="700" fill="#6B7280">복귀 날 몰아치기</text>
+      <!-- 과다 주입: 넘치는 그리스 -->
+      <circle cx="150" cy="250" r="62" fill="#E8EEF8" stroke="#6B7280" stroke-width="6"/>
+      <g fill="#6B7280">
+        <path d="M118 320 C126 333 132 342 132 351 A14 14 0 1 1 104 351 C104 342 110 333 118 320 Z"/>
+        <path d="M156 330 C164 343 170 352 170 361 A14 14 0 1 1 142 361 C142 352 148 343 156 330 Z"/>
+        <path d="M192 322 C200 335 206 344 206 353 A14 14 0 1 1 178 353 C178 344 184 335 192 322 Z"/>
+      </g>
+      <text x="150" y="420" text-anchor="middle" font-size="24" fill="#6B7280">과다 주입 &rarr; 씰 파손&middot;발열</text>
+      <!-- 누락 포인트: 빈 원 -->
+      <circle cx="330" cy="250" r="62" fill="none" stroke="#6B7280" stroke-width="6" stroke-dasharray="10 12"/>
+      <text x="330" y="262" text-anchor="middle" font-size="30" font-weight="700" fill="#6B7280">?</text>
+      <text x="330" y="420" text-anchor="middle" font-size="24" fill="#6B7280">구석 포인트 누락</text>
+      <!-- 우 카드: 소량·다회 -->
+      <rect x="490" y="30" width="430" height="420" rx="20" fill="#FFFFFF" stroke="#3B5BDB" stroke-width="5"/>
+      <circle cx="560" cy="95" r="30" fill="#3B5BDB"/>
+      <path d="M546 96 L556 106 L576 84" stroke="#FFFFFF" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="610" y="106" font-size="32" font-weight="700" fill="#1E2B7A">소량&middot;다회 주입</text>
+      <!-- 유막 재형성 베어링 -->
+      <circle cx="705" cy="255" r="88" fill="#E8EEF8" stroke="#1E2B7A" stroke-width="7"/>
+      <circle cx="705" cy="255" r="36" fill="#FFFFFF" stroke="#1E2B7A" stroke-width="7"/>
+      <path d="M630 200 A95 95 0 0 1 780 200" fill="none" stroke="#F5A623" stroke-width="8" stroke-linecap="round"/>
+      <g fill="#3B5BDB">
+        <path d="M660 120 C666 130 670 137 670 144 A10 10 0 1 1 650 144 C650 137 654 130 660 120 Z"/>
+        <path d="M705 108 C711 118 715 125 715 132 A10 10 0 1 1 695 132 C695 125 699 118 705 108 Z"/>
+        <path d="M750 120 C756 130 760 137 760 144 A10 10 0 1 1 740 144 C740 137 744 130 750 120 Z"/>
+      </g>
+      <text x="705" y="420" text-anchor="middle" font-size="24" fill="#3B5BDB" font-weight="700">수분 플러싱 &middot; 유막 재형성</text>
+      <!-- 중앙 화살표 -->
+      <line x1="452" y1="240" x2="478" y2="240" stroke="#F5A623" stroke-width="8" stroke-linecap="round"/>
+      <polygon points="492,240 470,228 470,252" fill="#F5A623"/>
+    </svg>
+  </div>
+  <p style="color:#1A1F3C;font-size:36px;line-height:1.7;margin:0;text-align:center;">"많이"가 아니라, 정확한 양을 정확한 포인트에.</p>
+  <div class="num dark">4 / 8</div>
 </div>
 
-<!-- 슬라이드 5: 핵심 수치 -->
-<!-- [시각화 방향] 큰 숫자 중앙 + 베어링 수명 곡선 상승 그래프 라인 -->
-<div class="slide" style="background:#3B5BDB;padding:110px 90px;text-align:center;">
-  <p style="color:rgba(255,255,255,0.8);font-size:34px;margin:150px 0 30px;">재가동 시퀀스형 자동 윤활 적용 사례</p>
-  <p style="color:#FFFFFF;font-size:150px;font-weight:700;margin:0;">2.3배</p>
-  <p style="color:#FFFFFF;font-size:40px;margin-top:30px;">베어링 수명 연장</p>
-  <div class="num">5 / 6</div>
+<!-- ═══ 슬라이드 5: 재가동 시퀀스 (TYPE C 프로세스) ═══ -->
+<!-- [시각 요소] 3단계 프로세스 다이어그램: 정지 모드 → D-1 소량·다회 주입(강조) → 기동 -->
+<div class="slide" style="background:#F4F6FA;padding:90px 70px 80px;">
+  <span class="badge">SEQUENCE</span>
+  <h2 style="color:#1E2B7A;font-size:52px;margin:32px 0 0;">기동 전 자동 주입</h2>
+  <div class="viz" style="height:560px;margin:20px 0 0;">
+    <svg width="940" height="540" viewBox="0 0 940 540">
+      <text x="155" y="70" text-anchor="middle" font-size="28" font-weight="700" fill="#3B5BDB">휴가 전</text>
+      <text x="470" y="70" text-anchor="middle" font-size="28" font-weight="700" fill="#F5A623">복귀 D-1</text>
+      <text x="785" y="70" text-anchor="middle" font-size="28" font-weight="700" fill="#3B5BDB">재가동</text>
+      <rect x="20" y="95" width="270" height="310" rx="20" fill="#FFFFFF" stroke="#D9DEE8" stroke-width="4"/>
+      <circle cx="155" cy="185" r="52" fill="#E8EEF8"/>
+      <rect x="136" y="163" width="14" height="44" rx="5" fill="#1E2B7A"/>
+      <rect x="160" y="163" width="14" height="44" rx="5" fill="#1E2B7A"/>
+      <text x="155" y="292" text-anchor="middle" font-size="32" font-weight="700" fill="#1E2B7A">정지 모드</text>
+      <text x="155" y="338" text-anchor="middle" font-size="23" fill="#6B7280">주기 연장 운전</text>
+      <text x="155" y="370" text-anchor="middle" font-size="23" fill="#6B7280">최소 유막 유지</text>
+      <rect x="335" y="95" width="270" height="310" rx="20" fill="#FFFFFF" stroke="#F5A623" stroke-width="5"/>
+      <circle cx="470" cy="185" r="52" fill="#E8EEF8"/>
+      <g fill="#3B5BDB">
+        <path d="M452 152 C459 164 464 172 464 180 A12 12 0 1 1 440 180 C440 172 445 164 452 152 Z"/>
+        <path d="M486 162 C493 174 498 182 498 190 A12 12 0 1 1 474 190 C474 182 479 174 486 162 Z"/>
+        <path d="M468 192 C475 204 480 212 480 220 A12 12 0 1 1 456 220 C456 212 461 204 468 192 Z"/>
+      </g>
+      <text x="470" y="292" text-anchor="middle" font-size="32" font-weight="700" fill="#1E2B7A">소량&middot;다회 주입</text>
+      <text x="470" y="338" text-anchor="middle" font-size="23" fill="#6B7280">재가동 프로그램</text>
+      <text x="470" y="370" text-anchor="middle" font-size="23" fill="#6B7280">유막 재형성</text>
+      <rect x="650" y="95" width="270" height="310" rx="20" fill="#FFFFFF" stroke="#D9DEE8" stroke-width="4"/>
+      <circle cx="785" cy="185" r="52" fill="#E8EEF8"/>
+      <polygon points="768,160 768,210 812,185" fill="#1E2B7A"/>
+      <text x="785" y="292" text-anchor="middle" font-size="32" font-weight="700" fill="#1E2B7A">기동</text>
+      <text x="785" y="338" text-anchor="middle" font-size="23" fill="#6B7280">마찰 손상 없이</text>
+      <text x="785" y="370" text-anchor="middle" font-size="23" fill="#6B7280">라인 시작</text>
+      <line x1="296" y1="250" x2="320" y2="250" stroke="#3B5BDB" stroke-width="8" stroke-linecap="round"/>
+      <polygon points="334,250 312,238 312,262" fill="#3B5BDB"/>
+      <line x1="611" y1="250" x2="635" y2="250" stroke="#3B5BDB" stroke-width="8" stroke-linecap="round"/>
+      <polygon points="649,250 627,238 627,262" fill="#3B5BDB"/>
+      <line x1="60" y1="470" x2="880" y2="470" stroke="#D9DEE8" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="155" cy="470" r="12" fill="#3B5BDB"/>
+      <circle cx="470" cy="470" r="12" fill="#F5A623"/>
+      <circle cx="785" cy="470" r="12" fill="#3B5BDB"/>
+      <text x="470" y="518" text-anchor="middle" font-size="24" fill="#6B7280">기동 신호 연동으로 사전 주입 자동 실행 (단독형~PLC 연동형)</text>
+    </svg>
+  </div>
+  <p style="color:#1A1F3C;font-size:36px;line-height:1.7;margin:0;text-align:center;">기동 신호보다 윤활이 먼저 도는 구조</p>
+  <div class="num dark">5 / 8</div>
 </div>
 
-<!-- 슬라이드 6: CTA -->
-<!-- [시각화 방향] 담당자 명함형 레이아웃 + KLT 로고 -->
+<!-- ═══ 슬라이드 6: 재가동 전 점검 (TYPE E 체크리스트) ═══ -->
+<!-- [시각 요소] 체크 아이콘 4항목 — 핵심 항목(기동 전 주입) Navy 강조 -->
+<div class="slide" style="background:#F4F6FA;padding:90px 90px 80px;">
+  <span class="badge">CHECK</span>
+  <h2 style="color:#1E2B7A;font-size:52px;margin:32px 0 44px;">재가동 전 점검</h2>
+  <div style="display:flex;flex-direction:column;gap:26px;">
+    <div style="display:flex;align-items:center;gap:30px;background:#FFFFFF;border-radius:18px;padding:28px 36px;">
+      <svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" fill="#3B5BDB"/><path d="M19 33 L28 42 L46 23" stroke="#FFFFFF" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <p style="color:#1A1F3C;font-size:34px;margin:0;line-height:1.4;">그리스 묽어짐(유화)&middot;변색 확인</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:30px;background:#FFFFFF;border-radius:18px;padding:28px 36px;">
+      <svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" fill="#3B5BDB"/><path d="M19 33 L28 42 L46 23" stroke="#FFFFFF" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <p style="color:#1A1F3C;font-size:34px;margin:0;line-height:1.4;">하우징 결로&middot;수분 침투 점검</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:30px;background:#E8EEF8;border-radius:18px;padding:28px 36px;">
+      <svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" fill="#1E2B7A"/><path d="M19 33 L28 42 L46 23" stroke="#FFFFFF" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <p style="color:#1E2B7A;font-size:34px;margin:0;line-height:1.4;font-weight:700;">기동 전 소량&middot;다회 주입 실시</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:30px;background:#FFFFFF;border-radius:18px;padding:28px 36px;">
+      <svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" fill="#3B5BDB"/><path d="M19 33 L28 42 L46 23" stroke="#FFFFFF" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <p style="color:#1A1F3C;font-size:34px;margin:0;line-height:1.4;">과다 주입&middot;누락 포인트 확인</p>
+    </div>
+  </div>
+  <div class="num dark">6 / 8</div>
+</div>
+
+<!-- ═══ 슬라이드 7: 핵심 수치 (TYPE F 차트) ═══ -->
+<!-- [시각 요소] Before/After 가로 막대 비교 — 기준 1.0 vs 2.3배 (실제 비율 반영: 270px vs 621px) -->
+<div class="slide" style="background:#3B5BDB;padding:100px 90px 80px;">
+  <p style="color:rgba(255,255,255,0.85);font-size:34px;margin:0 0 10px;text-align:center;">기동 전 자동 주입 적용 시</p>
+  <p style="color:#FFFFFF;font-size:140px;font-weight:700;margin:0;text-align:center;">2.3배</p>
+  <p style="color:#FFFFFF;font-size:38px;margin:14px 0 0;text-align:center;">베어링 수명 연장</p>
+  <div class="viz" style="height:380px;margin-top:40px;">
+    <svg width="820" height="360" viewBox="0 0 820 360">
+      <text x="60" y="92" font-size="26" fill="rgba(255,255,255,0.75)">수동 일괄 급유</text>
+      <rect x="60" y="108" width="270" height="64" rx="10" fill="rgba(255,255,255,0.28)"/>
+      <text x="350" y="150" font-size="26" fill="rgba(255,255,255,0.75)">기준 1.0</text>
+      <text x="60" y="240" font-size="26" font-weight="700" fill="#FFFFFF">KLT 자동 윤활</text>
+      <rect x="60" y="256" width="621" height="64" rx="10" fill="#FFFFFF"/>
+      <text x="700" y="300" font-size="34" font-weight="700" fill="#FFFFFF">2.3</text>
+    </svg>
+  </div>
+  <p style="color:rgba(255,255,255,0.6);font-size:22px;margin:10px 0 0;text-align:center;">고하중 송풍기(팬) 베어링 적용 사례 기준 &middot; 공수 월 8시간 절감 별도</p>
+  <div class="num">7 / 8</div>
+</div>
+
+<!-- ═══ 슬라이드 8: 종합 + CTA (TYPE G) ═══ -->
+<!-- [시각 요소] Gold 구분선 + 종합 한 줄(스레드 묶기) + 명함형 레이아웃 -->
 <div class="slide" style="background:linear-gradient(115deg,#1A1F6B 0%,#3B5BDB 100%);padding:120px 90px;text-align:center;">
   <div class="brand" style="color:#FFFFFF;left:0;width:100%;text-align:center;">KLT &bull; PULSARLUBE</div>
-  <div style="width:120px;height:4px;background:#F5A623;margin:280px auto 44px;"></div>
-  <h2 style="color:#FFFFFF;font-size:54px;line-height:1.5;margin:0 0 40px;">정지 예정일을 알려주시면<br><span style="color:#F5A623;">재가동 윤활 플랜</span>을 무료로 검토해 드립니다</h2>
+  <p style="color:rgba(255,255,255,0.85);font-size:36px;margin:230px 0 0;">재가동 트러블은 운이 아니라 <b style="color:#F5A623;">순서</b>입니다.</p>
+  <div style="width:120px;height:4px;background:#F5A623;margin:40px auto 44px;"></div>
+  <h2 style="color:#FFFFFF;font-size:54px;line-height:1.5;margin:0 0 40px;">정지 예정일을 알려주시면<br><span style="color:#F5A623;">재가동 리스크</span>를 무상으로 점검해 드립니다</h2>
   <p style="color:rgba(255,255,255,0.85);font-size:32px;margin:0;">KLT 영업팀 이헌국 &middot; [연락처]</p>
   <p style="color:rgba(255,255,255,0.6);font-size:26px;margin-top:14px;">hglee@pulsarlube.com</p>
   <p style="color:#F5A623;font-size:22px;letter-spacing:4px;margin-top:60px;">FOR YOUR MACHINERY</p>
