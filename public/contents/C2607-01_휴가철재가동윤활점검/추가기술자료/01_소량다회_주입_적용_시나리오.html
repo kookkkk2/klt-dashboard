@@ -1,0 +1,94 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>재가동 전 <span class='gold'>소량&middot;다회</span> 주입 적용 시나리오</title>
+<style>
+@page { size: A4; margin: 14mm 13mm 16mm; }
+* { box-sizing: border-box; }
+body { margin:0; font-family:'Pretendard','Noto Sans CJK KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+       color:#1A1F3C; font-size:10.5pt; line-height:1.65; }
+.topbar { width:100%; font-size:8pt; color:#6B7280; letter-spacing:2px; }
+.topbar .l { float:left; color:#1E2B7A; font-weight:700; }
+.topbar .r { float:right; }
+.hero { clear:both; margin-top:6mm; background:linear-gradient(105deg,#1A1F6B 0%,#3B5BDB 100%);
+        border-radius:10px; padding:9mm 10mm 8mm; color:#FFFFFF; }
+.hero .kicker { font-size:8.5pt; letter-spacing:3px; color:rgba(255,255,255,0.75); margin:0 0 2mm; }
+.hero h1 { font-size:19pt; line-height:1.35; margin:0; color:#FFFFFF; }
+.hero h1 .gold { color:#F5A623; }
+.hero .sub { font-size:9.5pt; color:rgba(255,255,255,0.8); margin:2.5mm 0 0; }
+h2 { font-size:13pt; color:#1E2B7A; margin:8mm 0 2mm; border-bottom:2px solid #1E2B7A; padding-bottom:1.5mm; }
+h2 .no { display:inline-block; background:#3B5BDB; color:#FFFFFF; font-size:9.5pt; font-weight:700;
+         border-radius:4px; padding:0.5mm 2.5mm; margin-right:2.5mm; vertical-align:middle; }
+h2 .en { font-size:8pt; color:#6B7280; font-weight:400; margin-left:3mm; letter-spacing:1px; }
+p { margin:0 0 3mm; }
+.lead { font-size:10.5pt; margin:5mm 0 0; }
+table.t { width:100%; border-collapse:collapse; font-size:9pt; margin:3mm 0; }
+table.t th { background:#1E2B7A; color:#FFFFFF; padding:2.2mm 2.5mm; text-align:left; font-size:9pt; }
+table.t td { padding:2.2mm 2.5mm; border-bottom:0.5pt solid #D9DEE8; vertical-align:top; }
+table.t tr.alt td { background:#F4F6FA; }
+.card { background:#E8EEF8; border-radius:8px; padding:4mm 5mm; margin:3mm 0; }
+.card.warn { background:#FFF8EC; border:1pt solid #F5A623; }
+.quote { border-left:3pt solid #F5A623; background:#F4F6FA; padding:3mm 4mm; margin:3mm 0; color:#1E2B7A; }
+.stat { display:inline-block; background:#3B5BDB; color:#FFFFFF; border-radius:8px; padding:3mm 6mm;
+        text-align:center; margin-right:3mm; }
+.stat b { font-size:16pt; display:block; }
+.stat span { font-size:8pt; color:rgba(255,255,255,0.85); }
+.step { border:1pt solid #D9DEE8; border-radius:8px; padding:3.5mm 4mm; background:#FFFFFF; }
+.step .sno { display:inline-block; background:#3B5BDB; color:#fff; font-weight:700; border-radius:4px;
+             padding:0.5mm 2.5mm; font-size:9pt; margin-bottom:1.5mm; }
+.chk { border:1pt solid #D9DEE8; border-radius:8px; padding:3mm 4mm; margin:0 0 2.5mm; }
+.chk h3 { font-size:11pt; color:#1E2B7A; margin:0 0 2mm; }
+.box { display:inline-block; width:3.6mm; height:3.6mm; border:1.3pt solid #1E2B7A; border-radius:1mm;
+       margin-right:2.5mm; vertical-align:-0.6mm; }
+.item { margin:0 0 2mm; padding-left:6.5mm; text-indent:-6.5mm; }
+.item b { color:#1E2B7A; }
+.footer { margin-top:7mm; border-top:1pt solid #D9DEE8; padding-top:3mm; font-size:8pt; color:#6B7280; }
+.footer .tag { color:#F5A623; letter-spacing:2px; font-weight:700; float:right; }
+.small { font-size:8pt; color:#6B7280; }
+.flow td { text-align:center; font-size:8.5pt; padding:2mm 1mm; }
+.flow .node { background:#E8EEF8; border:1pt solid #3B5BDB; border-radius:6px; padding:2.5mm 1.5mm; color:#1E2B7A; font-weight:700; }
+.flow .node.hot { background:#3B5BDB; color:#FFFFFF; border-color:#3B5BDB; }
+.flow .arr { color:#3B5BDB; font-size:12pt; font-weight:700; }
+</style></head><body>
+<div class="topbar"><span class="l">KLT &bull; PULSARLUBE</span><span class="r">CONFIDENTIAL &nbsp;|&nbsp; C2607-01 추가 기술자료 1/5</span></div>
+<div class="hero"><p class="kicker">TECHNICAL GUIDE 1/5</p><h1>재가동 전 <span class='gold'>소량&middot;다회</span> 주입 적용 시나리오</h1><p class="sub">휴가 전 정지 모드 전환부터 복귀 D-1 재가동 프로그램까지 — 단계별 타임라인</p></div>
+
+<p class="lead">하계휴가 정지부터 복귀 기동까지, 시스템(Pulsarlube PLC)과 작업자(보전원)가 각각 해야 할 액션을 시점별로 정리했습니다. 핵심은 <b>기동 신호보다 윤활이 먼저 도는 순서</b>입니다.</p>
+
+<h2><span class="no">01</span>재가동 시퀀스 흐름도<span class="en">SEQUENCE OVERVIEW</span></h2>
+<table class="flow" style="width:100%;border-collapse:collapse;">
+<tr>
+<td style="width:22%;"><div class="node">정지 모드 전환<br><span style="font-weight:400;">휴가 D-1~2</span></div></td>
+<td class="arr" style="width:4%;">&#9654;</td>
+<td style="width:22%;"><div class="node">대기 모드<br><span style="font-weight:400;">휴가 기간</span></div></td>
+<td class="arr" style="width:4%;">&#9654;</td>
+<td style="width:22%;"><div class="node hot">재가동 프로그램<br><span style="font-weight:400;">복귀 D-1 · 소량·다회</span></div></td>
+<td class="arr" style="width:4%;">&#9654;</td>
+<td style="width:22%;"><div class="node">정상 운전 복귀<br><span style="font-weight:400;">복귀 D-Day</span></div></td>
+</tr></table>
+
+<h2><span class="no">02</span>단계별 타임라인<span class="en">STEP-BY-STEP TIMELINE</span></h2>
+<table class="t">
+<tr><th style="width:9%;">단계</th><th style="width:13%;">시점</th><th style="width:27%;">시스템(Pulsarlube PLC) 설정</th><th style="width:24%;">작업자(보전원) 체크포인트</th><th style="width:27%;">기술적 목적</th></tr>
+<tr><td><b>1단계</b></td><td>휴가 D-1~2<br><span class="small">(정지 준비)</span></td>
+<td><b>[정지 모드] 전환</b><br>&middot; 토출 주기 일시적 연장 운전<br>&middot; 또는 최소 유지 유량으로 전환</td>
+<td>&middot; 주유기 잔량&middot;배터리/전원 상태 확인<br>&middot; 주유기 주변 오염 물질 일차 제거</td>
+<td>정지 기간 과도한 그리스 누적을 방지하면서 외부 이물질 침투를 막는 <b>최소 내부 압력 유지</b></td></tr>
+<tr class="alt"><td><b>2단계</b></td><td>휴가 기간<br><span class="small">(Shutdown)</span></td>
+<td><b>대기 모드 (Standby)</b><br>&middot; PLC 신호 연동 시 급유 일시 정지</td>
+<td>&middot; 물리적 순회 점검 불필요<br><span class="small">(보전원 휴무)</span></td>
+<td>결로 수분 침투 방지 및 하우징 내부 <b>밀폐 유지</b></td></tr>
+<tr><td><b>3단계</b></td><td>복귀 D-1<br><span class="small">(사전 가동)</span></td>
+<td><b>[재가동 프로그램] 가동</b><br>&middot; 기동 12~24시간 전 소량&middot;다회 강제 토출<br><span class="small">(예: 1시간 간격 정격량 분할 주입)</span></td>
+<td>&middot; 원격 제어로 주유기 정상 작동 확인<br>&middot; 경보(Error) 신호 발생 여부 모니터링</td>
+<td>정지 중 유입된 수분을 밀어내고(Flushing), 멈춰 있는 접촉면에 <b>초기 유막을 압력으로 선제 재형성</b> &rarr; 기동 순간의 최초 금속 접촉(Shock Wear) 방지</td></tr>
+<tr class="alt"><td><b>4단계</b></td><td>복귀 D-Day<br><span class="small">(메인 기동)</span></td>
+<td><b>[정상 운전 모드] 자동 복귀</b><br>&middot; 설비 가동 신호와 동기화하여 정량 토출 시작</td>
+<td>&middot; 기동 후 1~2시간 내 최초 순회<br>&middot; 베어링 소음&middot;초기 온도 모니터링</td>
+<td>운전 중 마찰열 배출 및 <b>안정적인 정상 유막 두께 유지</b></td></tr>
+</table>
+
+<div class="quote">&ldquo;정지 상태에서 급유해도 되는가?&rdquo; — 통상 급유는 회전 중이 원칙이지만, 사전 급유(Pre-lubrication)의 목적은 다릅니다. 결로 수분 배출과 초기 유막 형성으로 <b>기동 순간의 건마찰을 막는 것</b>이며, 그래서 &lsquo;다량 1회&rsquo;가 아닌 &lsquo;소량&middot;다회&rsquo;로 주입합니다.</div>
+<div class="card"><b style="color:#1E2B7A;">적용 구성</b> — Pulsarlube PLC 연동식 자동 주유기(원격제어&middot;양방향 통신) + 다점 설비는 멀티포인트 설치 키트&middot;분배기 구성. 정지&middot;재가동 일정이 확정되면 KLT가 라인별 시퀀스 값 설정을 지원합니다.</div>
+
+<div class="footer"><span class="tag">FOR YOUR MACHINERY</span>
+KLT &middot; Pulsarlube &nbsp;&middot;&nbsp; www.pulsarlube.co.kr<br>
+&copy; KLT. 본 자료의 무단 전재를 금합니다. 수치는 명기된 조건(고하중 송풍기 팬 베어링 적용 사례 등) 기준입니다.</div>
+</body></html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>하계휴가 복귀 설비 <span class='gold'>재가동 전</span> 윤활 점검 체크리스트</title>
+<style>
+@page { size: A4; margin: 14mm 13mm 16mm; }
+* { box-sizing: border-box; }
+body { margin:0; font-family:'Pretendard','Noto Sans CJK KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif;
+       color:#1A1F3C; font-size:10.5pt; line-height:1.65; }
+.topbar { width:100%; font-size:8pt; color:#6B7280; letter-spacing:2px; }
+.topbar .l { float:left; color:#1E2B7A; font-weight:700; }
+.topbar .r { float:right; }
+.hero { clear:both; margin-top:6mm; background:linear-gradient(105deg,#1A1F6B 0%,#3B5BDB 100%);
+        border-radius:10px; padding:9mm 10mm 8mm; color:#FFFFFF; }
+.hero .kicker { font-size:8.5pt; letter-spacing:3px; color:rgba(255,255,255,0.75); margin:0 0 2mm; }
+.hero h1 { font-size:19pt; line-height:1.35; margin:0; color:#FFFFFF; }
+.hero h1 .gold { color:#F5A623; }
+.hero .sub { font-size:9.5pt; color:rgba(255,255,255,0.8); margin:2.5mm 0 0; }
+h2 { font-size:13pt; color:#1E2B7A; margin:8mm 0 2mm; border-bottom:2px solid #1E2B7A; padding-bottom:1.5mm; }
+h2 .no { display:inline-block; background:#3B5BDB; color:#FFFFFF; font-size:9.5pt; font-weight:700;
+         border-radius:4px; padding:0.5mm 2.5mm; margin-right:2.5mm; vertical-align:middle; }
+h2 .en { font-size:8pt; color:#6B7280; font-weight:400; margin-left:3mm; letter-spacing:1px; }
+p { margin:0 0 3mm; }
+.lead { font-size:10.5pt; margin:5mm 0 0; }
+table.t { width:100%; border-collapse:collapse; font-size:9pt; margin:3mm 0; }
+table.t th { background:#1E2B7A; color:#FFFFFF; padding:2.2mm 2.5mm; text-align:left; font-size:9pt; }
+table.t td { padding:2.2mm 2.5mm; border-bottom:0.5pt solid #D9DEE8; vertical-align:top; }
+table.t tr.alt td { background:#F4F6FA; }
+.card { background:#E8EEF8; border-radius:8px; padding:4mm 5mm; margin:3mm 0; }
+.card.warn { background:#FFF8EC; border:1pt solid #F5A623; }
+.quote { border-left:3pt solid #F5A623; background:#F4F6FA; padding:3mm 4mm; margin:3mm 0; color:#1E2B7A; }
+.stat { display:inline-block; background:#3B5BDB; color:#FFFFFF; border-radius:8px; padding:3mm 6mm;
+        text-align:center; margin-right:3mm; }
+.stat b { font-size:16pt; display:block; }
+.stat span { font-size:8pt; color:rgba(255,255,255,0.85); }
+.step { border:1pt solid #D9DEE8; border-radius:8px; padding:3.5mm 4mm; background:#FFFFFF; }
+.step .sno { display:inline-block; background:#3B5BDB; color:#fff; font-weight:700; border-radius:4px;
+             padding:0.5mm 2.5mm; font-size:9pt; margin-bottom:1.5mm; }
+.chk { border:1pt solid #D9DEE8; border-radius:8px; padding:3mm 4mm; margin:0 0 2.5mm; }
+.chk h3 { font-size:11pt; color:#1E2B7A; margin:0 0 2mm; }
+.box { display:inline-block; width:3.6mm; height:3.6mm; border:1.3pt solid #1E2B7A; border-radius:1mm;
+       margin-right:2.5mm; vertical-align:-0.6mm; }
+.item { margin:0 0 2mm; padding-left:6.5mm; text-indent:-6.5mm; }
+.item b { color:#1E2B7A; }
+.footer { margin-top:7mm; border-top:1pt solid #D9DEE8; padding-top:3mm; font-size:8pt; color:#6B7280; }
+.footer .tag { color:#F5A623; letter-spacing:2px; font-weight:700; float:right; }
+.small { font-size:8pt; color:#6B7280; }
+.flow td { text-align:center; font-size:8.5pt; padding:2mm 1mm; }
+.flow .node { background:#E8EEF8; border:1pt solid #3B5BDB; border-radius:6px; padding:2.5mm 1.5mm; color:#1E2B7A; font-weight:700; }
+.flow .node.hot { background:#3B5BDB; color:#FFFFFF; border-color:#3B5BDB; }
+.flow .arr { color:#3B5BDB; font-size:12pt; font-weight:700; }
+
+@page { margin: 10mm 13mm 11mm; }
+body { font-size:9.5pt; line-height:1.5; }
+.hero { margin-top:3mm; padding:5mm 8mm 4.5mm; }
+.hero h1 { font-size:15pt; }
+.hero .sub { margin-top:1.5mm; font-size:9pt; }
+.lead { margin:3mm 0 0; font-size:9.5pt; }
+.card { padding:2.5mm 4mm; margin:2.5mm 0; }
+.chk { padding:2.2mm 4mm; margin-bottom:2mm; }
+.chk h3 { font-size:10.5pt; margin-bottom:1.5mm; }
+.item { margin-bottom:1.2mm; }
+.quote { margin:2mm 0; padding:2mm 4mm; }
+.footer { margin-top:3.5mm; padding-top:2mm; }
+</style></head><body>
+<div class="topbar"><span class="l">KLT &bull; PULSARLUBE</span><span class="r">CONFIDENTIAL &nbsp;|&nbsp; C2607-01 추가 기술자료 4/5</span></div>
+<div class="hero"><p class="kicker">CHECK SHEET 4/5</p><h1>하계휴가 복귀 설비 <span class='gold'>재가동 전</span> 윤활 점검 체크리스트</h1><p class="sub">현장 보전원용 1페이지 점검 양식 — 인쇄&middot;태블릿 겸용</p></div>
+
+<p class="lead">현장에서 인쇄하거나 태블릿으로 보며 직접 체크하는 실무 양식입니다. 기동 전 4개 영역&middot;9개 항목을 순서대로 점검하십시오.</p>
+
+<div class="card" style="background:#F4F6FA;border:1pt solid #D9DEE8;">
+점검 일자: 20___년 ___월 ___일 &nbsp;&nbsp;|&nbsp;&nbsp; 라인/설비명: ______________________ &nbsp;&nbsp;|&nbsp;&nbsp; 점검자: ____________ (서명)
+</div>
+
+<div class="chk"><h3>▣ 1. 그리스 상태 물리적 점검 <span class="small">(기능성 저하 여부)</span></h3>
+<p class="item"><span class="box"></span><b>배출 그리스 색상&middot;오염 점검</b> — 베어링 주변 노출 그리스에 유화(우윳빛 변색) 또는 경화(딱딱하게 굳음) 현상이 없는가?</p>
+<p class="item"><span class="box"></span><b>기유 분리 상태 확인</b> — 하우징 하부에 그리스에서 분리된 오일이 과도하게 고여 흘러내리지 않았는가?</p></div>
+
+<div class="chk"><h3>▣ 2. 결로 및 수분 침투 점검 <span class="small">(부식 방지)</span></h3>
+<p class="item"><span class="box"></span><b>하우징 결로 확인</b> — 온도차로 베어링 하우징 내부나 씰 틈새에 물방울(결로)이 맺혀 있지 않은가?</p>
+<p class="item"><span class="box"></span><b>부식 여부 육안 검사</b> — 베어링 샤프트&middot;하우징 인근 금속면에 붉은 녹이 발생하기 시작하지 않았는가?</p></div>
+
+<div class="chk"><h3>▣ 3. 자동 윤활 주유기(Pulsarlube) 상태 점검</h3>
+<p class="item"><span class="box"></span><b>장비 전원&middot;배터리 점검</b> — 주유기 배터리 잔량이 충분하며, PLC 연동 제어 전원에 이상 경보가 없는가?</p>
+<p class="item"><span class="box"></span><b>그리스 잔량 점검</b> — 휴가 기간 소모량을 감안할 때 가동 중 소진될 우려가 없는 수준인가?</p>
+<p class="item"><span class="box"></span><b>토출 라인(튜브) 점검</b> — 분배기&middot;연결 튜브 내부 그리스가 굳어 막히거나 꺾인 부위는 없는가?</p></div>
+
+<div class="chk" style="border-color:#3B5BDB;background:#E8EEF8;"><h3>▣ 4. 기동 직전 선제 급유 (Pre-lubrication) 실행</h3>
+<p class="item"><span class="box"></span><b>기동 전 강제 토출(소량&middot;다회)</b> — 메인 전원을 켜고 라인을 회전시키기 전, 수동 퍼지(Purge) 또는 PLC 예약 시퀀스로 최소 1~2회분 그리스를 미리 도포했는가?</p></div>
+
+<div class="quote">이상 발견 시 조치 요령은 <b>&lsquo;재가동 윤활 점검 가이드(5/5)&rsquo;</b>의 트러블슈팅 항목을 참조하십시오.</div>
+
+<div class="footer"><span class="tag">FOR YOUR MACHINERY</span>
+KLT &middot; Pulsarlube &nbsp;&middot;&nbsp; www.pulsarlube.co.kr<br>
+&copy; KLT. 본 자료의 무단 전재를 금합니다. 수치는 명기된 조건(고하중 송풍기 팬 베어링 적용 사례 등) 기준입니다.</div>
+</body></html>
