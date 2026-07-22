@@ -304,6 +304,25 @@ function DashboardView({ cm, dl, fi, ym }) {
   )
 }
 
+/* 폼 필드 래퍼 — 반드시 모듈 스코프에 둔다.
+   컴포넌트 내부에 정의하면 렌더마다 새 컴포넌트 타입이 되어 input이 재마운트되고
+   한 글자 입력 후 포커스를 잃는다(입력 불가처럼 보이는 버그). */
+function Field({ label, children }) {
+  return (
+    <div>
+      <div style={{ fontSize: 12, color: SUB, marginBottom: 5, fontWeight: 600 }}>{label}</div>
+      {children}
+    </div>
+  )
+}
+
+/* 붙여넣은 텍스트에서 이메일 주소만 추출 → 중복 제거 (줄바꿈·쉼표·세미콜론·공백·<> 구분) */
+function parseEmails(blob) {
+  const found = (blob.match(/[^\s,;<>"']+@[^\s,;<>"']+\.[^\s,;<>"']+/g) || [])
+    .map(e => e.trim().replace(/[.,;]+$/, '').toLowerCase())
+  return [...new Set(found)]
+}
+
 /* ── 발송기록 · 피드백 입력 폼 ────────────────────────────── */
 function EntryForm({ cm, onSaved, session }) {
   const [tab, setTab] = useState('dl')
@@ -314,6 +333,10 @@ function EntryForm({ cm, onSaved, session }) {
     content_id: cm[0]?.id || '', channel: '리멤버', sent_date: new Date().toISOString().slice(0, 10),
     owner_name: session.user.email, company: '', contact_name: '', position: '', send_status: '발송완료', note: '',
   })
+  // 이메일뉴스레터 대량 발송용: 보낸메일함 등에서 여러 주소를 붙여넣는 입력칸
+  const [emailBlob, setEmailBlob] = useState('')
+  const isNewsletter = dlForm.channel === '이메일뉴스레터'
+  const parsedEmails = parseEmails(emailBlob)
   const [fbForm, setFbForm] = useState({
     content_id: cm[0]?.id || '', channel: '블로그', occurred_date: new Date().toISOString().slice(0, 10),
     owner_name: session.user.email, company: '', contact_name: '', feedback_type: '문의',
@@ -326,15 +349,27 @@ function EntryForm({ cm, onSaved, session }) {
   }
 
   const saveDl = async () => {
-    if (!dlForm.company) return alert('거래처명을 입력해주세요')
+    let rows
+    if (isNewsletter) {
+      // 이메일뉴스레터: 붙여넣은 주소를 파싱해 주소당 1행씩 일괄 기록 (연락처 = 이메일)
+      const emails = parsedEmails
+      if (!emails.length) return alert('수신 이메일 주소를 한 개 이상 붙여넣어 주세요')
+      rows = emails.map(em => ({
+        content_id: dlForm.content_id, channel: dlForm.channel, sent_date: dlForm.sent_date,
+        owner_name: dlForm.owner_name, company: '', contact_name: em, position: '',
+        send_status: dlForm.send_status, note: '', owner_id: session.user.id,
+      }))
+    } else {
+      if (!dlForm.company) return alert('거래처명을 입력해주세요')
+      rows = [{ ...dlForm, note: '', owner_id: session.user.id }]
+    }
     setSaving(true)
-    const { error } = await supabase.from('distribution_log').insert({
-      ...dlForm, owner_id: session.user.id,
-    })
+    const { error } = await supabase.from('distribution_log').insert(rows)
     setSaving(false)
     if (error) { alert('저장 실패: ' + error.message); return }
     setSaved('dl')
     setDlForm(f => ({ ...f, company: '', contact_name: '', position: '', note: '' }))
+    setEmailBlob('')
     onSaved()
     setTimeout(() => setSaved(''), 3000)
   }
@@ -352,13 +387,6 @@ function EntryForm({ cm, onSaved, session }) {
     onSaved()
     setTimeout(() => setSaved(''), 3000)
   }
-
-  const Field = ({ label, children }) => (
-    <div>
-      <div style={{ fontSize: 12, color: SUB, marginBottom: 5, fontWeight: 600 }}>{label}</div>
-      {children}
-    </div>
-  )
 
   const tabBtnStyle = (active) => ({
     padding: '9px 18px', borderRadius: R.ctl, border: `1px solid ${active ? C.blue : BORDER}`,
@@ -398,27 +426,51 @@ function EntryForm({ cm, onSaved, session }) {
             <Field label="영업담당자">
               <input className="wds-input" type="text" style={ctlStyle} value={dlForm.owner_name} onChange={e => setDlForm(f => ({ ...f, owner_name: e.target.value }))} />
             </Field>
-            <Field label="거래처명 *">
-              <input className="wds-input" type="text" style={ctlStyle} placeholder="예: 현대자동차 울산공장" value={dlForm.company} onChange={e => setDlForm(f => ({ ...f, company: e.target.value }))} />
-            </Field>
-            <Field label="담당자명">
-              <input className="wds-input" type="text" style={ctlStyle} placeholder="예: 홍길동" value={dlForm.contact_name} onChange={e => setDlForm(f => ({ ...f, contact_name: e.target.value }))} />
-            </Field>
-            <Field label="직급">
-              <input className="wds-input" type="text" style={ctlStyle} placeholder="예: 부장" value={dlForm.position} onChange={e => setDlForm(f => ({ ...f, position: e.target.value }))} />
-            </Field>
-            <Field label="발송상태">
-              <select className="wds-input" style={ctlStyle} value={dlForm.send_status} onChange={e => setDlForm(f => ({ ...f, send_status: e.target.value }))}>
-                {['발송완료','열람','미팅확정','회신없음'].map(o => <option key={o}>{o}</option>)}
-              </select>
-            </Field>
           </div>
-          <Field label="비고 / 향후 액션">
-            <input className="wds-input" type="text" style={ctlStyle} placeholder="예: 7/10 방문 미팅 샘플 지참" value={dlForm.note} onChange={e => setDlForm(f => ({ ...f, note: e.target.value }))} />
-          </Field>
+
+          {isNewsletter ? (
+            <div>
+              <Field label="수신 이메일 주소 — 여러 개 한 번에 붙여넣기">
+                <textarea
+                  className="wds-input"
+                  style={{ ...ctlStyle, minHeight: 150, resize: 'vertical', fontFamily: 'inherit', lineHeight: 1.6 }}
+                  placeholder={'보낸메일함에서 복사한 주소를 그대로 붙여넣으세요.\n줄바꿈 · 쉼표 · 세미콜론 모두 인식합니다.\n예) hong@abc.co.kr; kim@def.com'}
+                  value={emailBlob}
+                  onChange={e => setEmailBlob(e.target.value)}
+                />
+              </Field>
+              <div style={{ margin: '8px 2px 16px', fontSize: 13, color: parsedEmails.length ? C.blue : SUB, fontWeight: 600 }}>
+                인식된 주소 {parsedEmails.length}개{parsedEmails.length > 0 ? ' — 저장 시 주소당 1건씩 발송기록에 추가됩니다 (담당자명·직급은 비워둡니다)' : ''}
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+                <Field label="발송상태">
+                  <select className="wds-input" style={ctlStyle} value={dlForm.send_status} onChange={e => setDlForm(f => ({ ...f, send_status: e.target.value }))}>
+                    {['발송완료','열람','미팅확정','회신없음'].map(o => <option key={o}>{o}</option>)}
+                  </select>
+                </Field>
+              </div>
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+              <Field label="거래처명 *">
+                <input className="wds-input" type="text" style={ctlStyle} placeholder="예: 현대자동차 울산공장" value={dlForm.company} onChange={e => setDlForm(f => ({ ...f, company: e.target.value }))} />
+              </Field>
+              <Field label="담당자명">
+                <input className="wds-input" type="text" style={ctlStyle} placeholder="예: 홍길동" value={dlForm.contact_name} onChange={e => setDlForm(f => ({ ...f, contact_name: e.target.value }))} />
+              </Field>
+              <Field label="직급">
+                <input className="wds-input" type="text" style={ctlStyle} placeholder="예: 부장" value={dlForm.position} onChange={e => setDlForm(f => ({ ...f, position: e.target.value }))} />
+              </Field>
+              <Field label="발송상태">
+                <select className="wds-input" style={ctlStyle} value={dlForm.send_status} onChange={e => setDlForm(f => ({ ...f, send_status: e.target.value }))}>
+                  {['발송완료','열람','미팅확정','회신없음'].map(o => <option key={o}>{o}</option>)}
+                </select>
+              </Field>
+            </div>
+          )}
           <div style={{ marginTop: 20, display: 'flex', alignItems: 'center', gap: 14 }}>
             <button className="wds-btn wds-btn-primary" onClick={saveDl} disabled={saving} style={{ ...saveBtn, opacity: saving ? 0.6 : 1 }}>
-              {saving ? '저장 중…' : '발송기록 저장'}
+              {saving ? '저장 중…' : (isNewsletter ? `발송기록 저장${parsedEmails.length ? ` (${parsedEmails.length}건)` : ''}` : '발송기록 저장')}
             </button>
             {saved === 'dl' && <span style={{ fontSize: 13.5, color: C.greenText, fontWeight: 600 }}>✓ 저장됨 — 대시보드에 즉시 반영됩니다</span>}
           </div>
